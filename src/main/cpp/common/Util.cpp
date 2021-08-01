@@ -1,6 +1,16 @@
 #include "common/Util.h"
 
 
+double Util::DegreesToRadians(double theta)
+{
+    return theta * (2 * wpi::math::pi) / 360.0;
+}
+
+double Util::RadiansToDegrees(double theta)
+{
+    return theta * 360.0 / (2 * wpi::math::pi);
+}
+
 // Convert any angle theta in radians to its equivalent on the interval [0, 2pi]
 double Util::ZeroTo2PiRads(double theta)
 {
@@ -31,4 +41,14 @@ double Util::NegPiToPiRads(double theta)
         theta += 2 * wpi::math::pi;
     
     return theta;
+}
+
+double Util::GetAverage(vector<double> numbers)
+{
+    double sum = 0.0;
+
+    for (auto n : numbers)
+        sum += n;
+    
+    return sum / numbers.size();
 }
