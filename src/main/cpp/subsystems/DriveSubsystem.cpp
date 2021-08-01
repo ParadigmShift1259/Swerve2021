@@ -16,7 +16,7 @@ DriveSubsystem::DriveSubsystem(Gyro *gyro)
         , kFrontLeftTurningEncoderPort
         , kFrontLeftDriveMotorReversed
         , kFrontLeftOffset
-        , std::string("FrontLeft")
+        , string("FrontLeft")
     }
     , m_frontRight
     {
@@ -25,7 +25,7 @@ DriveSubsystem::DriveSubsystem(Gyro *gyro)
         , kFrontRightTurningEncoderPort
         , kFrontRightDriveMotorReversed
         , kFrontRightOffset
-        , std::string("FrontRight")
+        , string("FrontRight")
     }
     , m_rearRight
     {
@@ -34,7 +34,7 @@ DriveSubsystem::DriveSubsystem(Gyro *gyro)
         , kRearRightTurningEncoderPort
         , kRearRightDriveMotorReversed
         , kRearRightOffset
-        , std::string("RearRight")
+        , string("RearRight")
     }
     , m_rearLeft
     {
@@ -43,7 +43,7 @@ DriveSubsystem::DriveSubsystem(Gyro *gyro)
         , kRearLeftTurningEncoderPort
         , kRearLeftDriveMotorReversed
         , kRearLeftOffset
-        , std::string("RearLeft")
+        , string("RearLeft")
     }
     , m_gyro(gyro)
     , m_odometry{kDriveKinematics, m_gyro->GetHeadingAsRot2d(), Pose2d()}

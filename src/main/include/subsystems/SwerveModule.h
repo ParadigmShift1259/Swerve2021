@@ -73,15 +73,9 @@ public:
     /// Resync the relative NEO turn encoder to the absolute encoder
     void ResetRelativeToAbsolute();
 
-    // Convert any angle theta in radians to its equivalent on the interval [0, 2pi]
-    static double ZeroTo2PiRads(double theta);
-
-    // Convert any angle theta in radians to its equivalent on the interval [-pi, pi]
-    static double NegPiToPiRads(double theta);
-
 private:
-    double VoltageToRadians(double voltage, double Offset);
-    double VoltageToDegrees(double voltage, double Offset);
+    /// Calculate the absolute angle, in radians, of the encoder by the voltage and an offset (also in radians)
+    double CalcAbsoluteAngle(double voltage, double Offset);
 
     // Determine the smallest magnitude delta angle that can be added to initial angle that will 
     // result in an angle equivalent (but not necessarily equal) to final angle. 

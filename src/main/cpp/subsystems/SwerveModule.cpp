@@ -40,30 +40,30 @@ SwerveModule::SwerveModule(int driveMotorChannel,
     m_drivePIDLoader.Load(m_drivePIDController);
     m_turnPIDLoader.Load(m_turnPIDController);
 
-    double initPosition = VoltageToRadians(m_turningEncoder.GetVoltage(), m_offset);
+    double initPosition = CalcAbsoluteAngle(m_turningEncoder.GetVoltage(), m_offset);
     m_turnRelativeEncoder.SetPosition(initPosition); // Tell the encoder where the absolute encoder is
 }
 
 #pragma GCC diagnostic pop
 
-frc::SwerveModuleState SwerveModule::GetState()
+SwerveModuleState SwerveModule::GetState()
 {
-    double angle = VoltageToRadians(m_turningEncoder.GetVoltage(), m_offset);
-    return {meters_per_second_t{m_driveEncoder.GetVelocity()}, frc::Rotation2d(radian_t(angle))};
+    double angle = CalcAbsoluteAngle(m_turningEncoder.GetVoltage(), m_offset);
+    return {meters_per_second_t{m_driveEncoder.GetVelocity()}, Rotation2d(radian_t(angle))};
 }
 
 void SwerveModule::Periodic()
 {
-    double absAngle = VoltageToRadians(m_turningEncoder.GetVoltage(), m_offset);
+    double absAngle = CalcAbsoluteAngle(m_turningEncoder.GetVoltage(), m_offset);
 
     SmartDashboard::PutNumber("D_SM_Rel " + m_name, m_turnRelativeEncoder.GetPosition());
     SmartDashboard::PutNumber("D_SM_Abs " + m_name, absAngle);
     SmartDashboard::PutNumber("D_SM_AbsDiff " + m_name, m_turnRelativeEncoder.GetPosition() - absAngle);
 }
 
-void SwerveModule::SetDesiredState(frc::SwerveModuleState &state)
+void SwerveModule::SetDesiredState(SwerveModuleState &state)
 {
-    // Retrieving turn PID values from SmartDashboard
+    // Retrieving PID values from SmartDashboard if enabled
     m_drivePIDLoader.LoadFromNetworkTable(m_drivePIDController);
     m_turnPIDLoader.LoadFromNetworkTable(m_turnPIDController);
 
@@ -83,17 +83,17 @@ void SwerveModule::SetDesiredState(frc::SwerveModuleState &state)
 
     if (state.speed != 0_mps) {
         #ifdef DISABLE_DRIVE
-        m_drivePIDController.SetReference(0, rev::ControlType::kVelocity);
+        m_drivePIDController.SetReference(0, ControlType::kVelocity);
         #else
-        m_drivePIDController.SetReference(direction * state.speed.to<double>(), rev::ControlType::kVelocity);
+        m_drivePIDController.SetReference(direction * state.speed.to<double>(), ControlType::kVelocity);
         #endif
     }
     else
-        m_drivePIDController.SetReference(0, rev::ControlType::kVoltage);
+        m_drivePIDController.SetReference(0, ControlType::kVoltage);
 
     // Set the angle unless module is coming to a full stop
     if (state.speed != 0_mps)
-        m_turnPIDController.SetReference(newPosition, rev::ControlType::kPosition);
+        m_turnPIDController.SetReference(newPosition, ControlType::kPosition);
 }
 
 void SwerveModule::ResetEncoders()
@@ -101,22 +101,16 @@ void SwerveModule::ResetEncoders()
     m_driveEncoder.SetPosition(0.0); 
 }
 
-double SwerveModule::VoltageToRadians(double voltage, double offset)
+double SwerveModule::CalcAbsoluteAngle(double voltage, double offset)
 {
-    double angle = fmod(voltage * DriveConstants::kTurnVoltageToRadians - m_offset + 2 * wpi::math::pi, 2 * wpi::math::pi);
+    double angle = fmod(voltage * DriveConstants::kTurnCalcAbsoluteAngle - m_offset + 2 * wpi::math::pi, 2 * wpi::math::pi);
     angle = 2 * wpi::math::pi - angle;
-    return angle;
-}
-
-double SwerveModule::VoltageToDegrees(double voltage, double offSet)
-{
-    double angle = fmod(voltage * DriveConstants::KTurnVoltageToDegrees - offSet + 360.0, 360.0);
     return angle;
 }
 
 void SwerveModule::ResetRelativeToAbsolute()
 {
-    double absAngle = VoltageToRadians(m_turningEncoder.GetVoltage(), m_offset);
+    double absAngle = CalcAbsoluteAngle(m_turningEncoder.GetVoltage(), m_offset);
     m_turnRelativeEncoder.SetPosition(absAngle);
 }
 
