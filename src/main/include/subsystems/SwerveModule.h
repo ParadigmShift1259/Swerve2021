@@ -77,8 +77,8 @@ public:
     void ResetRelativeToAbsolute();
 
 private:
-    /// Calculate the @ref m_absAngle based on the pulse widths from @ref m_pulseWidthCallback
-    void CalcAbsoluteAngle();
+    /// Calculate the absolute angle, in radians, based on the pulse widths from @ref m_pulseWidthCallback
+    double CalcAbsoluteAngle();
     /// Determine the smallest magnitude delta angle that can be added to initial angle that will 
     /// result in an angle equivalent (but not necessarily equal) to final angle. 
     /// All angles in radians
@@ -96,8 +96,6 @@ private:
     double m_offset;
     /// String used to identify each pod, used for SmartDashboard prints
     string m_name;
-    /// Absolute angle calculated from the absolute encoder pulse widths
-    double m_absAngle = 0.0;
 
     /// Falon 500 that drives the pod
     TalonFX m_driveMotor;

@@ -50,28 +50,25 @@ SwerveModule::SwerveModule(int driveMotorChannel,
 
 void SwerveModule::Periodic()
 {
-    CalcAbsoluteAngle();
-
     if (m_timer.Get() < 5)
         ResetRelativeToAbsolute();
 
-    // SmartDashboard::PutNumber("D_SM_Rel " + m_name, m_turnRelativeEncoder.GetPosition());
-    // SmartDashboard::PutNumber("D_SM_Abs " + m_name, m_absAngle);
-    // SmartDashboard::PutNumber("D_SM_AbsDiff " + m_name, m_turnRelativeEncoder.GetPosition() - m_absAngle);
+    double absAngle = CalcAbsoluteAngle();
+    SmartDashboard::PutNumber("D_SM_Rel " + m_name, m_turnRelativeEncoder.GetPosition());
+    SmartDashboard::PutNumber("D_SM_Abs " + m_name, absAngle);
+    SmartDashboard::PutNumber("D_SM_AbsDiff " + m_name, m_turnRelativeEncoder.GetPosition() - absAngle);
     // SmartDashboard::PutNumber("D_SM_MPS " + m_name, CalcMetersPerSec().to<double>());
     // SmartDashboard::PutNumber("D_SM_IError " + m_name, m_turnPIDController.GetIAccum());
     // SmartDashboard::PutNumber("D_SM_TP100MS " + m_name, m_driveMotor.GetSelectedSensorVelocity());
-    // SmartDashboard::PutNumber("D_SM_RelToAbsError " + m_name, m_absAngle - m_turnRelativeEncoder.GetPosition());
 }
 
-frc::SwerveModuleState SwerveModule::GetState()
+SwerveModuleState SwerveModule::GetState()
 {
     /// Why do we find the absolute angle here instead of the relative angle?
-    CalcAbsoluteAngle();
-    return { CalcMetersPerSec(), frc::Rotation2d(radian_t(m_absAngle))};
+    return { CalcMetersPerSec(), Rotation2d(radian_t(CalcAbsoluteAngle()))};
 }
 
-void SwerveModule::SetDesiredState(frc::SwerveModuleState &state)
+void SwerveModule::SetDesiredState(SwerveModuleState &state)
 {
     // Retrieving PID values from SmartDashboard if enabled
     m_drivePIDLoader.LoadFromNetworkTable(m_driveMotor);
@@ -102,7 +99,7 @@ void SwerveModule::SetDesiredState(frc::SwerveModuleState &state)
 
     // Set the angle unless module is coming to a full stop
     if (state.speed.to<double>() != 0.0)
-        m_turnPIDController.SetReference(newPosition, rev::ControlType::kPosition);
+        m_turnPIDController.SetReference(newPosition, ControlType::kPosition);
 
     // SmartDashboard::PutNumber("D_SM_SetpointMPS " + m_name, state.speed.to<double>());
     // SmartDashboard::PutNumber("D_SM_Error " + m_name, newPosition - m_turnRelativeEncoder.GetPosition());
@@ -113,23 +110,19 @@ void SwerveModule::ResetEncoders()
     m_driveMotor.SetSelectedSensorPosition(0.0);
 }
 
-void SwerveModule::CalcAbsoluteAngle()
+double SwerveModule::CalcAbsoluteAngle()
 {
     double pulseWidth = m_pulseWidthCallback(m_pwmChannel);
     // Pulse Width per rotation is not equal for all encoders. Some are 0 - 3865, some are 0 - 4096
-    m_absAngle = fmod((pulseWidth - m_offset) * DriveConstants::kPulseWidthToRadians + 2.0 * wpi::math::pi, 2.0 * wpi::math::pi);
+    return fmod((pulseWidth - m_offset) * DriveConstants::kPulseWidthToRadians + 2.0 * wpi::math::pi, 2.0 * wpi::math::pi);
     // SmartDashboard::PutNumber("D_SM_PW " + m_name, pulseWidth);
-    // SmartDashboard::PutNumber("D_SM_AA " + m_name, m_absAngle);
-    // Convert CW to CCW? m_absAngle = 2.0 * wpi::math::pi - m_absAngle;
+    // SmartDashboard::PutNumber("D_SM_AA " + m_name, absAngle);
+    // Convert CW to CCW? absAngle = 2.0 * wpi::math::pi - absAngle;
 }
 
 void SwerveModule::ResetRelativeToAbsolute()
 {
-    // printf( "Seeding the relative encoder with absolute encoder: %.3f %.3f %.3f \n", 
-    //             fabs(m_absAngle - m_turnRelativeEncoder.GetPosition()), 
-    //             m_absAngle, 
-    //             m_turnRelativeEncoder.GetPosition());
-    m_turnRelativeEncoder.SetPosition(m_absAngle);
+    m_turnRelativeEncoder.SetPosition(CalcAbsoluteAngle());
 }
 
 // Determine the smallest magnitude delta angle that can be added to initial angle that will 
