@@ -15,6 +15,7 @@
 #include <frc/kinematics/SwerveDriveOdometry.h>
 #include <frc2/command/SubsystemBase.h>
 #include <ctre/phoenix.h>
+#include <array>
 
 #include "Constants.h"
 #include "SwerveModule2.h"
@@ -122,7 +123,7 @@ public:
     void ResetEncoders();
 
     /// Readable alias for array of swerve modules
-    using SwerveModuleStates = wpi::array<frc::SwerveModuleState, DriveConstants::kNumSwerveModules>;
+    using SwerveModuleStates = std::array<frc::SwerveModuleState, DriveConstants::kNumSwerveModules>;
     /// Sets the drive SpeedControllers to a power from -1 to 1.
     void SetModuleStates(SwerveModuleStates desiredStates);
 
@@ -159,12 +160,12 @@ private:
     /// Get all 4 swerve module wheel speed to update the odometry with
     SwerveModuleStates getCurrentWheelSpeeds()
     {
-        SwerveModuleStates sms(
+        SwerveModuleStates sms({
             m_frontLeft.GetState(),
             m_frontRight.GetState(),
             m_rearLeft.GetState(),
             m_rearRight.GetState()
-        );
+        });
         return sms;
     }
 
