@@ -14,5 +14,13 @@
     "**/.factorypath": true,
     "**/*~": true
   },
-  "C_Cpp.default.configurationProvider": "vscode-wpilib"
+  "C_Cpp.default.configurationProvider": "vscode-wpilib",
+  "files.associations": {
+    "math": "cpp",
+    "typeinfo": "cpp",
+    "memory": "cpp",
+    "optional": "cpp",
+    "functional": "cpp",
+    "type_traits": "cpp"
+  }
 }

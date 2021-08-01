@@ -1,19 +1,15 @@
 #include "common/Gyro.h"
 
 
-Gyro::Gyro() :
-    m_gyro(0)
-{
-
-}
+Gyro::Gyro() : m_gyro(0) {}
 
 double Gyro::GetHeading()
 {
-    auto retVal = std::remainder(m_gyro.GetFusedHeading(), 360.0) * (kGyroReversed ? -1. : 1.);
-    if (retVal > 180.0)
-        retVal -= 360.0;
+    auto heading = std::remainder(m_gyro.GetFusedHeading(), 360.0) * (kGyroReversed ? -1. : 1.);
+    if (heading > 180.0)
+        heading -= 360.0;
 
-    return retVal;
+    return heading;
 }
 
 void Gyro::ZeroHeading()

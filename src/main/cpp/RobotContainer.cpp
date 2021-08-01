@@ -10,8 +10,6 @@
 
 #include "AutoPaths.h"
 
-using namespace DriveConstants;
-
 RobotContainer::RobotContainer()
     : m_gyro()
     , m_drive(&m_gyro)
@@ -49,7 +47,7 @@ void RobotContainer::SetDefaultCommands()
 
             m_drive.Drive(units::meters_per_second_t(xInput * AutoConstants::kMaxSpeed),
                             units::meters_per_second_t(yInput * AutoConstants::kMaxSpeed),
-                            units::angular_velocity::radians_per_second_t(rotInput),
+                            units::angular_velocity::radians_per_second_t(rotInput * DriveConstants::kDriveAngularSpeed.to<double>()),
                             m_fieldRelative);
         },
         {&m_drive}

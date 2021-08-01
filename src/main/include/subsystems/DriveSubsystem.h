@@ -14,59 +14,34 @@
 #include <frc/kinematics/SwerveDriveKinematics.h>
 #include <frc/kinematics/SwerveDriveOdometry.h>
 #include <frc2/command/SubsystemBase.h>
-#include <ctre/phoenix.h>
 
-#include "Constants.h"
-#include "SwerveModule2.h"
+#include "ctre/phoenix/CANifier.h"
+
 #include "common/Util.h"
 #include "common/Gyro.h"
 
-// Uncomment to directly set values to each swerve module
-//#define TUNE_MODULES
-// Uncomment to tune Rotation PID for Drive Subsystem
-//#define TUNE_ROTATION
+#include "Constants.h"
+#include "SwerveModule.h"
 
-// For each enum here, add a string to c_headerNamesDriveSubsystem
-// and a line like this: 
-//      m_logData[EDriveSubSystemLogData::e???] = ???;
-// to DriveSubsystem::Periodic
-enum class EDriveSubSystemLogData : int
-{
-    eFirstInt
-  , eLastInt = eFirstInt
+// Uncomment to directly set states to each module
+//#define MANUAL_MODULE_STATES
+// Uncomment to tune Rotation Drive PIDs
+//#define TUNE_ROTATION_DRIVE
 
-  , eFirstDouble
-  , eInputX = eFirstDouble
-  , eInputY
-  , eInputRot
-  , eOdoX
-  , eOdoY
-  , eOdoRot
-  , eLastDouble
-  , eGyroRot
-  , eGyroRotRate
-};
-
-const std::vector<std::string> c_headerNamesDriveSubsystem{
-       "InputX"
-     , "InputY"
-     , "InputRot"
-     , "OdoX"
-     , "OdoY"
-     , "OdoRot"
-     , "eGyroRot"
-     , "eGyroRotRate"
-};
+using namespace ctre::phoenix;
+using namespace DriveConstants;
+using namespace std;
+using namespace frc;
 
 class DriveSubsystem : public frc2::SubsystemBase
 {
 public:
-    enum EModuleLocation    //!< Order as returned by kDriveKinematics.ToSwerveModuleStates
+    enum ModuleLocation    //!< Order as returned by kDriveKinematics.ToSwerveModuleStates
     {
-        eFrontLeft,
-        eFrontRight,
-        eRearLeft,
-        eRearRight
+        kFrontLeft,
+        kFrontRight,
+        kRearLeft,
+        kRearRight
     };
 
     DriveSubsystem(Gyro *gyro);
@@ -122,13 +97,13 @@ public:
     void ResetEncoders();
 
     /// Readable alias for array of swerve modules
-    using SwerveModuleStates = wpi::array<frc::SwerveModuleState, DriveConstants::kNumSwerveModules>;
+    using SwerveModuleStates = wpi::array<SwerveModuleState, DriveConstants::kNumSwerveModules>;
     /// Sets the drive SpeedControllers to a power from -1 to 1.
     void SetModuleStates(SwerveModuleStates desiredStates);
 
     /// Returns the currently-estimated pose of the robot.
     /// \return The pose.
-    frc::Pose2d GetPose();
+    Pose2d GetPose();
 
     /// Converts PWM input on the CANifier to a pulse width
     /// \param pwmChannel The PWM channel to pass in
@@ -137,7 +112,7 @@ public:
 
     /// Resets the odometry to the specified pose.
     /// \param pose The pose to which to set the odometry.
-    void ResetOdometry(frc::Pose2d pose);
+    void ResetOdometry(Pose2d pose);
 
     /// Set all 4 wheels to the zero position
     void WheelsForward();
@@ -145,15 +120,12 @@ public:
     /// Resync all relative NEO turn encoders to the absolute encoders
     void ResetRelativeToAbsolute();
 
-    meter_t kTrackWidth = 23.5_in;
-    meter_t kWheelBase = 23.5_in;  //!< Distance between centers of front and back wheels on robot
-
     /// The kinematics object converts inputs into 4 individual swerve module turn angle and wheel speeds
-    frc::SwerveDriveKinematics<DriveConstants::kNumSwerveModules> kDriveKinematics{
-        frc::Translation2d( kWheelBase / 2,  kTrackWidth / 2),    // +x, +y FL
-        frc::Translation2d( kWheelBase / 2, -kTrackWidth / 2),    // +x, -y FR
-        frc::Translation2d(-kWheelBase / 2,  kTrackWidth / 2),    // -x, +y RL
-        frc::Translation2d(-kWheelBase / 2, -kTrackWidth / 2)};   // -x, -y RR
+    SwerveDriveKinematics<kNumSwerveModules> kDriveKinematics{
+        Translation2d( kWheelBase / 2,  kTrackWidth / 2),    // +x, +y FL
+        Translation2d( kWheelBase / 2, -kTrackWidth / 2),    // +x, -y FR
+        Translation2d(-kWheelBase / 2,  kTrackWidth / 2),    // -x, +y RL
+        Translation2d(-kWheelBase / 2, -kTrackWidth / 2)};   // -x, -y RR
 
 private:    
     /// Get all 4 swerve module wheel speed to update the odometry with
@@ -171,10 +143,10 @@ private:
     /// \name Swerve Modules
     /// The drive subsystem owns all 4 swerve modules
     ///@{
-    SwerveModule2 m_frontLeft;
-    SwerveModule2 m_frontRight;
-    SwerveModule2 m_rearRight;
-    SwerveModule2 m_rearLeft;
+    SwerveModule m_frontLeft;
+    SwerveModule m_frontRight;
+    SwerveModule m_rearRight;
+    SwerveModule m_rearLeft;
     ///@}
 
     /// Reads the absolute encoder pulse widths
@@ -182,13 +154,13 @@ private:
     /// Gyro to determine field relative driving, from @ref RobotContainer
     Gyro *m_gyro;
     /// Odometry class for tracking robot pose
-    frc::SwerveDriveOdometry<DriveConstants::kNumSwerveModules> m_odometry;
+    SwerveDriveOdometry<DriveConstants::kNumSwerveModules> m_odometry;
 
     /// PID to control overall robot chassis rotation 
     frc2::PIDController m_rotationPIDController{
-        DriveConstants::kRotationP,
-        DriveConstants::kRotationI,
-        DriveConstants::kRotationD
+        DriveConstants::kRotationDriveP,
+        DriveConstants::kRotationDriveI,
+        DriveConstants::kRotationDriveD
     };
     /// Last maintained heading, used for @ref HeadingDrive
     double m_lastHeading;

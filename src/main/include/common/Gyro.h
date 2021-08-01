@@ -4,15 +4,16 @@
 #include "units/angle.h"
 #include <frc/geometry/Rotation2d.h>
 
-#include <ctre/phoenix.h>
+#include "ctre/phoenix/sensors/PigeonIMU.h"
 
 using namespace DriveConstants;
 using namespace units;
+using namespace ctre::phoenix::sensors;
+
 
 class Gyro
 {
 public:
-
     Gyro();
 
     /// Returns the heading of the robot.
