@@ -1,6 +1,7 @@
 <img src="logo.png"
      alt="Paradigm Shift logo"
-     style="float: right; margin-right: 10px; margin-top: 80px" />
+     align="right"
+     style="margin-right: 10px; margin-top: 80px" />
 # **Swerve 2021**
 ### Paradigm Shift #1259
 
@@ -9,19 +10,15 @@ Falcon/NEO is on main, double NEO is on branch NEO (Currently not implemented).
 
 ### Doxygen documentation for main branch using Travis can be found [here](https://paradigmshift1259.github.io/Swerve2021).
 
-<br/>
-<br/>
 
-# Running Paths
+## Running Paths
 Team 1259 is currently using Team 3015's PathPlanner software to generate swerve paths.  
 PathPlanner generates a C++ array which is converted into an frc::Trajectory, an object that carries desired states via timestamps for our Auto runs.  
-## Setup
-#
+### Setup
 - Download PathPlanner latest release (2021 uses **v1.6**) executable for Windows `pathplanner-win.exe` from [**here**](https://github.com/mjansen4857/pathplanner/releases/tag/v1.6.0) and install the .exe
 - Read through the [**Path README**](PathREADME.md) (Copied from PathPlanner v1.6)
 - Get example swerve paths for the 2021 robot [**here**](https://github.com/ParadigmShift1259/FRC_Robot_2021/tree/paths)
-## Config
-#
+### Config
 - Open up PathPlanner
 - In the top left settings menu, set the following:
 
