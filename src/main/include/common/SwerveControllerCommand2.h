@@ -26,10 +26,9 @@
 
 #pragma once
 
-namespace frc2
-{
+namespace frc2 {
 
-    /**
+/**
  * A command that uses two PID controllers ({@link PIDController}) and a
  * ProfiledPIDController ({@link ProfiledPIDController}) to follow a trajectory
  * {@link Trajectory} with a swerve drive.
@@ -48,19 +47,18 @@ namespace frc2
  * the trajectory but rather goes to the angle given in the final state of the
  * trajectory.
  */
-    template <size_t NumModules>
-    class SwerveControllerCommand2
-        : public CommandHelper<CommandBase, SwerveControllerCommand2<NumModules>>
-    {
-        using voltsecondspermeter =
-            units::compound_unit<units::voltage::volt, units::second,
-                                 units::inverse<units::meter>>;
-        using voltsecondssquaredpermeter =
-            units::compound_unit<units::voltage::volt, units::squared<units::second>,
-                                 units::inverse<units::meter>>;
+template <size_t NumModules>
+class SwerveControllerCommand2
+    : public CommandHelper<CommandBase, SwerveControllerCommand2<NumModules>> {
+  using voltsecondspermeter =
+      units::compound_unit<units::voltage::volt, units::second,
+                           units::inverse<units::meter>>;
+  using voltsecondssquaredpermeter =
+      units::compound_unit<units::voltage::volt, units::squared<units::second>,
+                           units::inverse<units::meter>>;
 
-    public:
-        /**
+ public:
+  /**
    * Constructs a new SwerveControllerCommand2 that when executed will follow the
    * provided trajectory. This command will not return output voltages but
    * rather raw module states from the position controllers which need to be put
@@ -86,17 +84,17 @@ namespace frc2
    *                        position controllers.
    * @param requirements    The subsystems to require.
    */
-        SwerveControllerCommand2(
-            frc::Trajectory trajectory, std::function<frc::Pose2d()> pose,
-            frc::SwerveDriveKinematics<NumModules> kinematics,
-            frc2::PIDController xController, frc2::PIDController yController,
-            frc::ProfiledPIDController<units::radians> thetaController,
-            std::function<frc::Rotation2d()> desiredRotation,
-            std::function<void(std::array<frc::SwerveModuleState, NumModules>)>
-                output,
-            std::initializer_list<Subsystem *> requirements);
+  SwerveControllerCommand2(
+      frc::Trajectory trajectory, std::function<frc::Pose2d()> pose,
+      frc::SwerveDriveKinematics<NumModules> kinematics,
+      frc2::PIDController xController, frc2::PIDController yController,
+      frc::ProfiledPIDController<units::radians> thetaController,
+      std::function<frc::Rotation2d()> desiredRotation,
+      std::function<void(std::array<frc::SwerveModuleState, NumModules>)>
+          output,
+      std::initializer_list<Subsystem*> requirements);
 
-        /**
+  /**
    * Constructs a new SwerveControllerCommand2 that when executed will follow the
    * provided trajectory. This command will not return output voltages but
    * rather raw module states from the position controllers which need to be put
@@ -125,16 +123,16 @@ namespace frc2
    *                        position controllers.
    * @param requirements    The subsystems to require.
    */
-        SwerveControllerCommand2(
-            frc::Trajectory trajectory, std::function<frc::Pose2d()> pose,
-            frc::SwerveDriveKinematics<NumModules> kinematics,
-            frc2::PIDController xController, frc2::PIDController yController,
-            frc::ProfiledPIDController<units::radians> thetaController,
-            std::function<void(std::array<frc::SwerveModuleState, NumModules>)>
-                output,
-            std::initializer_list<Subsystem *> requirements);
+  SwerveControllerCommand2(
+      frc::Trajectory trajectory, std::function<frc::Pose2d()> pose,
+      frc::SwerveDriveKinematics<NumModules> kinematics,
+      frc2::PIDController xController, frc2::PIDController yController,
+      frc::ProfiledPIDController<units::radians> thetaController,
+      std::function<void(std::array<frc::SwerveModuleState, NumModules>)>
+          output,
+      std::initializer_list<Subsystem*> requirements);
 
-        /**
+  /**
    * Constructs a new SwerveControllerCommand2 that when executed will follow the
    * provided trajectory. This command will not return output voltages but
    * rather raw module states from the position controllers which need to be put
@@ -161,17 +159,17 @@ namespace frc2
    *                        position controllers.
    * @param requirements    The subsystems to require.
    */
-        SwerveControllerCommand2(
-            frc::Trajectory trajectory, std::function<frc::Pose2d()> pose,
-            frc::SwerveDriveKinematics<NumModules> kinematics,
-            frc2::PIDController xController, frc2::PIDController yController,
-            frc::ProfiledPIDController<units::radians> thetaController,
-            std::function<frc::Rotation2d()> desiredRotation,
-            std::function<void(std::array<frc::SwerveModuleState, NumModules>)>
-                output,
-            wpi::ArrayRef<Subsystem *> requirements = {});
+  SwerveControllerCommand2(
+      frc::Trajectory trajectory, std::function<frc::Pose2d()> pose,
+      frc::SwerveDriveKinematics<NumModules> kinematics,
+      frc2::PIDController xController, frc2::PIDController yController,
+      frc::ProfiledPIDController<units::radians> thetaController,
+      std::function<frc::Rotation2d()> desiredRotation,
+      std::function<void(std::array<frc::SwerveModuleState, NumModules>)>
+          output,
+      wpi::ArrayRef<Subsystem*> requirements = {});
 
-        /**
+  /**
    * Constructs a new SwerveControllerCommand2 that when executed will follow the
    * provided trajectory. This command will not return output voltages but
    * rather raw module states from the position controllers which need to be put
@@ -200,35 +198,37 @@ namespace frc2
    *                        position controllers.
    * @param requirements    The subsystems to require.
    */
-        SwerveControllerCommand2(
-            frc::Trajectory trajectory, std::function<frc::Pose2d()> pose,
-            frc::SwerveDriveKinematics<NumModules> kinematics,
-            frc2::PIDController xController, frc2::PIDController yController,
-            frc::ProfiledPIDController<units::radians> thetaController,
-            std::function<void(std::array<frc::SwerveModuleState, NumModules>)>
-                output,
-            wpi::ArrayRef<Subsystem *> requirements = {});
+  SwerveControllerCommand2(
+      frc::Trajectory trajectory, std::function<frc::Pose2d()> pose,
+      frc::SwerveDriveKinematics<NumModules> kinematics,
+      frc2::PIDController xController, frc2::PIDController yController,
+      frc::ProfiledPIDController<units::radians> thetaController,
+      std::function<void(std::array<frc::SwerveModuleState, NumModules>)>
+          output,
+      wpi::ArrayRef<Subsystem*> requirements = {});
 
-        void Initialize() override;
+  void Initialize() override;
 
-        void Execute() override;
+  void Execute() override;
 
-        void End(bool interrupted) override;
+  void End(bool interrupted) override;
 
-        bool IsFinished() override;
+  bool IsFinished() override;
 
-    private:
-        frc::Trajectory m_trajectory;
-        std::function<frc::Pose2d()> m_pose;
-        frc::SwerveDriveKinematics<NumModules> m_kinematics;
-        frc::HolonomicDriveController m_controller;
-        std::function<void(std::array<frc::SwerveModuleState, NumModules>)>
-            m_outputStates;
+ private:
+  frc::Trajectory m_trajectory;
+  std::function<frc::Pose2d()> m_pose;
+  frc::SwerveDriveKinematics<NumModules> m_kinematics;
+  frc::HolonomicDriveController m_controller;
+  std::function<void(std::array<frc::SwerveModuleState, NumModules>)>
+      m_outputStates;
 
-        std::function<frc::Rotation2d()> m_desiredRotation;
+  std::function<frc::Rotation2d()> m_desiredRotation;
 
-        frc2::Timer m_timer;
-        units::second_t m_prevTime;
-        frc::Rotation2d m_finalRotation;
-    };
-} // namespace frc2
+  frc2::Timer m_timer;
+  units::second_t m_prevTime;
+  frc::Rotation2d m_finalRotation;
+};
+}  // namespace frc2
+
+#include "SwerveControllerCommand2.inc"
