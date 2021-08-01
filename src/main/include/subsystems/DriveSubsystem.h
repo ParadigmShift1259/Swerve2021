@@ -131,12 +131,12 @@ private:
     /// Get all 4 swerve module wheel speed to update the odometry with
     SwerveModuleStates getCurrentWheelSpeeds()
     {
-        SwerveModuleStates sms(
+        SwerveModuleStates sms({
             m_frontLeft.GetState(),
             m_frontRight.GetState(),
             m_rearLeft.GetState(),
             m_rearRight.GetState()
-        );
+        });
         return sms;
     }
 

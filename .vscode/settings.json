@@ -21,6 +21,7 @@
     "memory": "cpp",
     "optional": "cpp",
     "functional": "cpp",
-    "type_traits": "cpp"
+    "type_traits": "cpp",
+    "array": "cpp"
   }
 }
