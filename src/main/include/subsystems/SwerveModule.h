@@ -75,7 +75,7 @@ public:
 
 private:
     /// Calculate the absolute angle, in radians, of the encoder by the voltage and an offset (also in radians)
-    double CalcAbsoluteAngle(double voltage, double Offset);
+    double CalcAbsoluteAngle();
 
     // Determine the smallest magnitude delta angle that can be added to initial angle that will 
     // result in an angle equivalent (but not necessarily equal) to final angle. 

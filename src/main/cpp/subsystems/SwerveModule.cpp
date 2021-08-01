@@ -40,7 +40,7 @@ SwerveModule::SwerveModule(int driveMotorChannel,
     m_drivePIDLoader.Load(m_drivePIDController);
     m_turnPIDLoader.Load(m_turnPIDController);
 
-    double initPosition = CalcAbsoluteAngle(m_turningEncoder.GetVoltage(), m_offset);
+    double initPosition = CalcAbsoluteAngle();
     m_turnRelativeEncoder.SetPosition(initPosition); // Tell the encoder where the absolute encoder is
 }
 
@@ -48,14 +48,12 @@ SwerveModule::SwerveModule(int driveMotorChannel,
 
 SwerveModuleState SwerveModule::GetState()
 {
-    double angle = CalcAbsoluteAngle(m_turningEncoder.GetVoltage(), m_offset);
-    return {meters_per_second_t{m_driveEncoder.GetVelocity()}, Rotation2d(radian_t(angle))};
+    return {meters_per_second_t{m_driveEncoder.GetVelocity()}, Rotation2d(radian_t(CalcAbsoluteAngle()))};
 }
 
 void SwerveModule::Periodic()
 {
-    double absAngle = CalcAbsoluteAngle(m_turningEncoder.GetVoltage(), m_offset);
-
+    double absAngle = CalcAbsoluteAngle();
     SmartDashboard::PutNumber("D_SM_Rel " + m_name, m_turnRelativeEncoder.GetPosition());
     SmartDashboard::PutNumber("D_SM_Abs " + m_name, absAngle);
     SmartDashboard::PutNumber("D_SM_AbsDiff " + m_name, m_turnRelativeEncoder.GetPosition() - absAngle);
@@ -101,17 +99,16 @@ void SwerveModule::ResetEncoders()
     m_driveEncoder.SetPosition(0.0); 
 }
 
-double SwerveModule::CalcAbsoluteAngle(double voltage, double offset)
+double SwerveModule::CalcAbsoluteAngle()
 {
-    double angle = fmod(voltage * DriveConstants::kTurnCalcAbsoluteAngle - m_offset + 2 * wpi::math::pi, 2 * wpi::math::pi);
+    double angle = fmod(m_turningEncoder.GetVoltage() * DriveConstants::kTurnCalcAbsoluteAngle - m_offset + 2 * wpi::math::pi, 2 * wpi::math::pi);
     angle = 2 * wpi::math::pi - angle;
     return angle;
 }
 
 void SwerveModule::ResetRelativeToAbsolute()
 {
-    double absAngle = CalcAbsoluteAngle(m_turningEncoder.GetVoltage(), m_offset);
-    m_turnRelativeEncoder.SetPosition(absAngle);
+    m_turnRelativeEncoder.SetPosition(CalcAbsoluteAngle());
 }
 
 double SwerveModule::MinTurnRads(double init, double final, bool& bOutputReverse)
