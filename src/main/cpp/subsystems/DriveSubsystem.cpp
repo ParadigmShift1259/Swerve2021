@@ -10,46 +10,41 @@
 
 DriveSubsystem::DriveSubsystem(Gyro *gyro)
     : m_frontLeft
-      {
-          kFrontLeftDriveMotorPort
+    {
+        kFrontLeftDriveMotorPort
         , kFrontLeftTurningMotorPort
-        , [this](CANifier::PWMChannel channel){ return PWMToPulseWidth(channel); } 
-        , kFrontLeftPWM
+        , kFrontLeftTurningEncoderPort
         , kFrontLeftDriveMotorReversed
         , kFrontLeftOffset
-        , string("FrontLeft")
-      }
+        , std::string("FrontLeft")
+    }
     , m_frontRight
-      {
-          kFrontRightDriveMotorPort
+    {
+        kFrontRightDriveMotorPort
         , kFrontRightTurningMotorPort
-        , [this](CANifier::PWMChannel channel){ return PWMToPulseWidth(channel); } 
-        , kFrontRightPWM
+        , kFrontRightTurningEncoderPort
         , kFrontRightDriveMotorReversed
         , kFrontRightOffset
-        , string("FrontRight")
-      }
+        , std::string("FrontRight")
+    }
     , m_rearRight
-      {
-          kRearRightDriveMotorPort
+    {
+        kRearRightDriveMotorPort
         , kRearRightTurningMotorPort
-        , [this](CANifier::PWMChannel channel){ return PWMToPulseWidth(channel); } 
-        , kRearRightPWM
+        , kRearRightTurningEncoderPort
         , kRearRightDriveMotorReversed
         , kRearRightOffset
-        , string("RearRight")
-      }
+        , std::string("RearRight")
+    }
     , m_rearLeft
-      {
-          kRearLeftDriveMotorPort
+    {
+        kRearLeftDriveMotorPort
         , kRearLeftTurningMotorPort
-        , [this](CANifier::PWMChannel channel){ return PWMToPulseWidth(channel); } 
-        , kRearLeftPWM
+        , kRearLeftTurningEncoderPort
         , kRearLeftDriveMotorReversed
         , kRearLeftOffset
-        , string("RearLeft")
-      }
-    , m_canifier(kCanifierID)
+        , std::string("RearLeft")
+    }
     , m_gyro(gyro)
     , m_odometry{kDriveKinematics, m_gyro->GetHeadingAsRot2d(), Pose2d()}
 {
@@ -231,13 +226,6 @@ void DriveSubsystem::ResetEncoders()
 Pose2d DriveSubsystem::GetPose()
 {
     return m_odometry.GetPose();
-}
-
-double DriveSubsystem::PWMToPulseWidth(CANifier::PWMChannel pwmChannel)
-{
-    double dutyCycleAndPeriod[2];
-    m_canifier.GetPWMInput(pwmChannel, dutyCycleAndPeriod);
-    return dutyCycleAndPeriod[0] * dutyCycleAndPeriod[1] / kPulseWidthToZeroOne;
 }
 
 void DriveSubsystem::ResetOdometry(Pose2d pose)

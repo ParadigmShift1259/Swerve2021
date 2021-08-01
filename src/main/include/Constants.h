@@ -39,7 +39,6 @@ namespace DriveConstants
     /// \name CAN bus IDs
     ///@{
     /// CAN IDs for swerve modules
-    constexpr int kCanifierID = 0;                       //!< CANifier CAN ID (for absolute encoder PWM inputs)
     
     constexpr int kFrontLeftDriveMotorPort    = 1;       //!< Front Left Drive CAN ID (TalonFX)   
     constexpr int kFrontLeftTurningMotorPort  = 2;       //!< Front Left Turn CAN ID (SparkMAX)   
@@ -54,22 +53,22 @@ namespace DriveConstants
     constexpr int kRearLeftTurningMotorPort   = 8;       //!< Rear Left Turn CAN ID (SparkMAX)
     ///@}
 
-    /// \name Canifier PWM channels
+    /// \name Roborio analog input channels
     ///@{
-    /// PWM channels for the canifier
-    constexpr CANifier::PWMChannel kFrontLeftPWM = CANifier::PWMChannel::PWMChannel0;
-    constexpr CANifier::PWMChannel kFrontRightPWM = CANifier::PWMChannel::PWMChannel2;
-    constexpr CANifier::PWMChannel kRearRightPWM = CANifier::PWMChannel::PWMChannel1;
-    constexpr CANifier::PWMChannel kRearLeftPWM = CANifier::PWMChannel::PWMChannel3;
+    /// Roborio analog input channels for Mk2 absolute encoders
+    constexpr int kFrontLeftTurningEncoderPort  = 0;
+    constexpr int kFrontRightTurningEncoderPort = 1;
+    constexpr int kRearRightTurningEncoderPort  = 2;
+    constexpr int kRearLeftTurningEncoderPort   = 3;
     ///@}
 
     /// \name Drive wheel reversal (inverting) flags
     ///@{
     /// To keep the swerve module bevel gear facing inwards we need to reverse the right side
-    constexpr bool kFrontLeftDriveMotorReversed  = true;
-    constexpr bool kRearLeftDriveMotorReversed   = true;
-    constexpr bool kFrontRightDriveMotorReversed = false;
-    constexpr bool kRearRightDriveMotorReversed  = false;
+    constexpr bool kFrontLeftDriveMotorReversed  = false;
+    constexpr bool kRearLeftDriveMotorReversed   = false;
+    constexpr bool kFrontRightDriveMotorReversed = true;
+    constexpr bool kRearRightDriveMotorReversed  = true;
     ///@}
 
     constexpr bool kGyroReversed = false;
@@ -85,18 +84,14 @@ namespace DriveConstants
     // constexpr double kRearRightOffset   = 0.0;
     // constexpr double kRearLeftOffset    = 0.0;
     //===============================================================================
-    constexpr double kFrontLeftOffset   = 2689.0;
-    constexpr double kFrontRightOffset  = 205.0;
-    constexpr double kRearRightOffset   = 1858.0;
-    constexpr double kRearLeftOffset    = 983.0;
+    constexpr double kFrontLeftOffset   = 3.142; //6.412;           //3.142;         // 3.14;
+    constexpr double kFrontRightOffset  = 5.105; //5.155 + 1.57;    //5.105;         // 5.07;         //5.66;
+    constexpr double kRearLeftOffset    = 5.963; //1.6292;  //1.8292; //4.85;       //1.42921;       // 3.34;         //4.29;
+    constexpr double kRearRightOffset   = 0.665; //0.635 + 1.57;    //0.665;         // 0.63;         //5.29;
 
-    // Pulse Width per rotation is not equal for all encoders. Some are 0 - 3865, some are 0 - 4096
-    // FL: 4096
-    // FR: 3970
-    // RL: 4096
-    // RR: 3865
-    constexpr double kPulseWidthToZeroOne = 4096.0;    // 4096 micro second pulse width is full circle
-    constexpr double kPulseWidthToRadians =  2.0 * wpi::math::pi / kPulseWidthToZeroOne;
+    constexpr double kMaxAnalogVoltage = 4.93;                              //!< Absolute encoder runs 0 to 4.93V
+    constexpr double kTurnVoltageToRadians = 2.0 * wpi::math::pi / kMaxAnalogVoltage;
+    constexpr double KTurnVoltageToDegrees = 360 / kMaxAnalogVoltage;
 
     /// \name Robot RotationDrive PID Controller
     ///@{

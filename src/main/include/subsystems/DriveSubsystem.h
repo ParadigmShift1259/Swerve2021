@@ -16,8 +16,6 @@
 #include <frc/SmartDashBoard/SmartDashboard.h>
 #include <frc2/command/SubsystemBase.h>
 
-#include <ctre/phoenix/CANifier.h>
-
 #include "common/Util.h"
 #include "common/Gyro.h"
 
@@ -29,7 +27,6 @@
 // Uncomment to tune Rotation Drive PIDs
 //#define TUNE_ROTATION_DRIVE
 
-using namespace ctre::phoenix;
 using namespace DriveConstants;
 using namespace std;
 using namespace frc;
@@ -106,11 +103,6 @@ public:
     /// \return The pose.
     Pose2d GetPose();
 
-    /// Converts PWM input on the CANifier to a pulse width
-    /// \param pwmChannel The PWM channel to pass in
-    /// \return The pulse width of the PWM channel
-    double PWMToPulseWidth(CANifier::PWMChannel pwmChannel);
-
     /// Resets the odometry to the specified pose.
     /// \param pose The pose to which to set the odometry.
     void ResetOdometry(Pose2d pose);
@@ -150,8 +142,6 @@ private:
     SwerveModule m_rearLeft;
     ///@}
 
-    /// Reads the absolute encoder pulse widths
-    CANifier m_canifier;
     /// Gyro to determine field relative driving, from @ref RobotContainer
     Gyro *m_gyro;
     /// Odometry class for tracking robot pose

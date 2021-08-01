@@ -7,83 +7,74 @@
 
 #include "subsystems/SwerveModule.h"
 
+// Removes deprecated warning for CANEncoder and CANPIDController
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 
 SwerveModule::SwerveModule(int driveMotorChannel, 
                            int turningMotorChannel,
-                           GetPulseWidthCallback pulseWidthCallback,
-                           CANifier::PWMChannel pwmChannel,
+                           const int turningEncoderPort,
                            bool driveMotorReversed,
                            double offset,
                            const std::string& name)
     : m_offset(offset)
     , m_name(name)
-    , m_driveMotor(driveMotorChannel)
+    , m_driveMotor(driveMotorChannel, CANSparkMax::MotorType::kBrushless)
     , m_turningMotor(turningMotorChannel, CANSparkMax::MotorType::kBrushless)
-    , m_drivePIDLoader("SM", kDriveAdjust, kDriveP, kDriveI, kDriveD, kDriveFF)
+    , m_drivePIDLoader("SM", kDriveAdjust, kDriveP, kDriveI, kDriveD, 0, 0, kDriveFF, 0, 0)
     , m_turnPIDLoader("SM", kTurnAdjust, kTurnP, kTurnI, kTurnD, kTurnIZ, kTurnIA)
-    , m_pulseWidthCallback(pulseWidthCallback)
-    , m_pwmChannel(pwmChannel)
+    , m_driveEncoder(m_driveMotor)
+    , m_turnRelativeEncoder(m_turningMotor)
+    , m_turningEncoder(turningEncoderPort)
 {
-    StatorCurrentLimitConfiguration statorLimit { true, kMotorCurrentLimit, kMotorCurrentLimit, 2 };
-    m_driveMotor.ConfigStatorCurrentLimit(statorLimit);
-    SupplyCurrentLimitConfiguration supplyLimit { true, kMotorCurrentLimit, kMotorCurrentLimit, 2 };
-    m_driveMotor.ConfigSupplyCurrentLimit(supplyLimit);
-    m_turningMotor.SetSmartCurrentLimit(kMotorCurrentLimit);
+    m_driveMotor.SetSmartCurrentLimit(ModuleConstants::kMotorCurrentLimit);
+    m_turningMotor.SetSmartCurrentLimit(ModuleConstants::kMotorCurrentLimit);
 
     // Set up GetVelocity() to return meters per sec instead of RPM
-    m_turnRelativeEncoder.SetPositionConversionFactor(2.0 * wpi::math::pi / kTurnMotorRevsPerWheelRev);
+    m_driveEncoder.SetVelocityConversionFactor(wpi::math::pi * ModuleConstants::kWheelDiameterMeters / (ModuleConstants::kDriveGearRatio * 60.0));
+    m_turnRelativeEncoder.SetPositionConversionFactor(2 * wpi::math::pi / ModuleConstants::kTurnMotorRevsPerWheelRev);
     
-    m_driveMotor.SetInverted(driveMotorReversed ? TalonFXInvertType::CounterClockwise : TalonFXInvertType::Clockwise);
+    m_driveMotor.SetInverted(driveMotorReversed);
     m_turningMotor.SetInverted(false);
-    m_driveMotor.ConfigSelectedFeedbackSensor(TalonFXFeedbackDevice::IntegratedSensor);
-    m_turnPIDController.SetFeedbackDevice(m_turnRelativeEncoder);
-    
-    m_turningMotor.SetIdleMode(CANSparkMax::IdleMode::kBrake);
-    m_driveMotor.SetNeutralMode(NeutralMode::Brake);
 
-    m_drivePIDLoader.Load(m_driveMotor);
+    m_drivePIDLoader.Load(m_drivePIDController);
     m_turnPIDLoader.Load(m_turnPIDController);
 
-    m_timer.Reset();
-    m_timer.Start();
+    double initPosition = VoltageToRadians(m_turningEncoder.GetVoltage(), m_offset);
+    m_turnRelativeEncoder.SetPosition(initPosition); // Tell the encoder where the absolute encoder is
+}
+
+#pragma GCC diagnostic pop
+
+frc::SwerveModuleState SwerveModule::GetState()
+{
+    double angle = VoltageToRadians(m_turningEncoder.GetVoltage(), m_offset);
+    return {meters_per_second_t{m_driveEncoder.GetVelocity()}, frc::Rotation2d(radian_t(angle))};
 }
 
 void SwerveModule::Periodic()
 {
-    CalcAbsoluteAngle();
+    double absAngle = VoltageToRadians(m_turningEncoder.GetVoltage(), m_offset);
 
-    if (m_timer.Get() < 5)
-        ResetRelativeToAbsolute();
-
-    // SmartDashboard::PutNumber("D_SM_Rel " + m_name, m_turnRelativeEncoder.GetPosition());
-    // SmartDashboard::PutNumber("D_SM_Abs " + m_name, m_absAngle);
-    // SmartDashboard::PutNumber("D_SM_AbsDiff " + m_name, m_turnRelativeEncoder.GetPosition() - m_absAngle);
-    // SmartDashboard::PutNumber("D_SM_MPS " + m_name, CalcMetersPerSec().to<double>());
-    // SmartDashboard::PutNumber("D_SM_IError " + m_name, m_turnPIDController.GetIAccum());
-    // SmartDashboard::PutNumber("D_SM_TP100MS " + m_name, m_driveMotor.GetSelectedSensorVelocity());
-    // SmartDashboard::PutNumber("D_SM_RelToAbsError " + m_name, m_absAngle - m_turnRelativeEncoder.GetPosition());
-}
-
-frc::SwerveModuleState SwerveModule::GetState()
-{
-    /// Why do we find the absolute angle here instead of the relative angle?
-    CalcAbsoluteAngle();
-    return { CalcMetersPerSec(), frc::Rotation2d(radian_t(m_absAngle))};
+    SmartDashboard::PutNumber("D_SM_Rel " + m_name, m_turnRelativeEncoder.GetPosition());
+    SmartDashboard::PutNumber("D_SM_Abs " + m_name, absAngle);
+    SmartDashboard::PutNumber("D_SM_AbsDiff " + m_name, m_turnRelativeEncoder.GetPosition() - absAngle);
 }
 
 void SwerveModule::SetDesiredState(frc::SwerveModuleState &state)
 {
-    // Retrieving PID values from SmartDashboard if enabled
-    m_drivePIDLoader.LoadFromNetworkTable(m_driveMotor);
+    // Retrieving turn PID values from SmartDashboard
+    m_drivePIDLoader.LoadFromNetworkTable(m_drivePIDController);
     m_turnPIDLoader.LoadFromNetworkTable(m_turnPIDController);
 
-    // Get relative encoder position
+    // Find NEO relative encoder position
     double currentPosition = m_turnRelativeEncoder.GetPosition();
 
-    // Calculate new turn position given current and desired position
+    // Calculate new turn position given current Neo position, current absolute encoder position, and desired state position
     bool bOutputReverse = false;
     double minTurnRads = MinTurnRads(currentPosition, state.angle.Radians().to<double>(), bOutputReverse);
-    double direction = 1.0; // Sent to TalonFX
+    double direction = 1.0;
+    // Inverts the drive motor if going in the "backwards" direction on the swerve module
     if (bOutputReverse)
         direction = -1.0;
 
@@ -92,51 +83,43 @@ void SwerveModule::SetDesiredState(frc::SwerveModuleState &state)
 
     if (state.speed != 0_mps) {
         #ifdef DISABLE_DRIVE
-        m_driveMotor.Set(TalonFXControlMode::Velocity, 0.0);
+        m_drivePIDController.SetReference(0, rev::ControlType::kVelocity);
         #else
-        m_driveMotor.Set(TalonFXControlMode::Velocity, direction * CalcTicksPer100Ms(state.speed));
+        m_drivePIDController.SetReference(direction * state.speed.to<double>(), rev::ControlType::kVelocity);
         #endif
     }
     else
-        m_driveMotor.Set(TalonFXControlMode::PercentOutput, 0.0);
+        m_drivePIDController.SetReference(0, rev::ControlType::kVoltage);
 
     // Set the angle unless module is coming to a full stop
-    if (state.speed.to<double>() != 0.0)
+    if (state.speed != 0_mps)
         m_turnPIDController.SetReference(newPosition, rev::ControlType::kPosition);
-
-    // SmartDashboard::PutNumber("D_SM_SetpointMPS " + m_name, state.speed.to<double>());
-    // SmartDashboard::PutNumber("D_SM_Error " + m_name, newPosition - m_turnRelativeEncoder.GetPosition());
 }
 
 void SwerveModule::ResetEncoders()
 {
-    m_driveMotor.SetSelectedSensorPosition(0.0);
+    m_driveEncoder.SetPosition(0.0); 
 }
 
-void SwerveModule::CalcAbsoluteAngle()
+double SwerveModule::VoltageToRadians(double voltage, double offset)
 {
-    double pulseWidth = m_pulseWidthCallback(m_pwmChannel);
-    // Pulse Width per rotation is not equal for all encoders. Some are 0 - 3865, some are 0 - 4096
-    m_absAngle = fmod((pulseWidth - m_offset) * DriveConstants::kPulseWidthToRadians + 2.0 * wpi::math::pi, 2.0 * wpi::math::pi);
-    // SmartDashboard::PutNumber("D_SM_PW " + m_name, pulseWidth);
-    // SmartDashboard::PutNumber("D_SM_AA " + m_name, m_absAngle);
-    // Convert CW to CCW? m_absAngle = 2.0 * wpi::math::pi - m_absAngle;
+    double angle = fmod(voltage * DriveConstants::kTurnVoltageToRadians - m_offset + 2 * wpi::math::pi, 2 * wpi::math::pi);
+    angle = 2 * wpi::math::pi - angle;
+    return angle;
+}
+
+double SwerveModule::VoltageToDegrees(double voltage, double offSet)
+{
+    double angle = fmod(voltage * DriveConstants::KTurnVoltageToDegrees - offSet + 360.0, 360.0);
+    return angle;
 }
 
 void SwerveModule::ResetRelativeToAbsolute()
 {
-    // printf( "Seeding the relative encoder with absolute encoder: %.3f %.3f %.3f \n", 
-    //             fabs(m_absAngle - m_turnRelativeEncoder.GetPosition()), 
-    //             m_absAngle, 
-    //             m_turnRelativeEncoder.GetPosition());
-    m_turnRelativeEncoder.SetPosition(m_absAngle);
+    double absAngle = VoltageToRadians(m_turningEncoder.GetVoltage(), m_offset);
+    m_turnRelativeEncoder.SetPosition(absAngle);
 }
 
-// Determine the smallest magnitude delta angle that can be added to initial angle that will 
-// result in an angle equivalent (but not necessarily equal) to final angle. 
-// All angles in radians
-// 
-// init final   angle1   angle2 
 double SwerveModule::MinTurnRads(double init, double final, bool& bOutputReverse)
 {
     init = Util::ZeroTo2PiRads(init);
@@ -149,30 +132,5 @@ double SwerveModule::MinTurnRads(double init, double final, bool& bOutputReverse
     angle1 = Util::NegPiToPiRads(angle1);
     angle2 = Util::NegPiToPiRads(angle2);
 
-    // Choose the smallest angle and determine reverse flag
-    //TODO: FINISHED ROBOT TUNING
-    // Eventually prefer angle 1 always during high speed to prevent 180s
-    // if (fabs(angle1) <= 2 * fabs(angle2))
-    // {
-        bOutputReverse = false;
-
-        return angle1;
-    // } 
-    // else
-    // {
-    //     bOutputReverse = true;
-
-    //     return angle2;
-    // }
-}
-
-meters_per_second_t SwerveModule::CalcMetersPerSec()
-{
-   double ticksPer100ms = m_driveMotor.GetSelectedSensorVelocity();
-   return meters_per_second_t(kDriveEncoderMetersPerSec * ticksPer100ms);
-}
-
-double SwerveModule::CalcTicksPer100Ms(meters_per_second_t speed)
-{
-   return speed.to<double>() / kDriveEncoderMetersPerSec;
+    return angle1;
 }
