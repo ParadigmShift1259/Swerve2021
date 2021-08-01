@@ -19,8 +19,8 @@ SwerveModule::SwerveModule(int driveMotorChannel,
     , m_name(name)
     , m_driveMotor(driveMotorChannel)
     , m_turningMotor(turningMotorChannel, CANSparkMax::MotorType::kBrushless)
-    , m_turnPIDLoader("SM", kTurnAdjust, kTurnP, kTurnI, kTurnD, kTurnIZ, kTurnIA)
     , m_drivePIDLoader("SM", kDriveAdjust, kDriveP, kDriveI, kDriveD, kDriveFF)
+    , m_turnPIDLoader("SM", kTurnAdjust, kTurnP, kTurnI, kTurnD, kTurnIZ, kTurnIA)
     , m_pulseWidthCallback(pulseWidthCallback)
     , m_pwmChannel(pwmChannel)
 {
