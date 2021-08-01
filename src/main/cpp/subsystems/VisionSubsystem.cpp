@@ -1,10 +1,6 @@
+
 #include "subsystems/VisionSubsystem.h"
 
-#include "Constants.h"
-#include <frc/SmartDashBoard/SmartDashboard.h>
-#include <frc/shuffleboard/Shuffleboard.h>
-
-using namespace VisionConstants;
 
 VisionSubsystem::VisionSubsystem() 
  : m_dashboard (nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard"))

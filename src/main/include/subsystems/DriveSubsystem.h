@@ -13,9 +13,10 @@
 #include <frc/kinematics/ChassisSpeeds.h>
 #include <frc/kinematics/SwerveDriveKinematics.h>
 #include <frc/kinematics/SwerveDriveOdometry.h>
+#include <frc/SmartDashBoard/SmartDashboard.h>
 #include <frc2/command/SubsystemBase.h>
 
-#include "ctre/phoenix/CANifier.h"
+#include <ctre/phoenix/CANifier.h>
 
 #include "common/Util.h"
 #include "common/Gyro.h"

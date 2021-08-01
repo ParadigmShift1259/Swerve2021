@@ -3,17 +3,18 @@
 
 #include <frc2/command/SubsystemBase.h>
 
-#include "frc/smartdashboard/SmartDashboard.h"
-#include "networktables/NetworkTable.h"
-#include "networktables/NetworkTableInstance.h"
+#include <frc/smartdashboard/SmartDashboard.h>
+#include <networktables/NetworkTable.h>
+#include <networktables/NetworkTableInstance.h>
 
 #include <wpi/math>
-#include "Constants.h"
 
+#include "Constants.h"
 #include "common/Util.h"
 
 using namespace std;
 using namespace frc;
+using namespace VisionConstants;
 
 class VisionSubsystem : public frc2::SubsystemBase
 {

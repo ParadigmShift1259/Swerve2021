@@ -1,7 +1,7 @@
-#include "common/CANSparkMaxPIDLoader.h"
+#include "common/PIDLoaderNEO.h"
 
 
-CANSparkMaxPIDLoader::CANSparkMaxPIDLoader(string name, bool adjustable, double p, double i, double d, double iz, double ia)
+PIDLoaderNEO::PIDLoaderNEO(string name, bool adjustable, double p, double i, double d, double iz, double ia)
     : m_name(name)
     , m_adjustable(adjustable)
     , m_p(p)
@@ -10,7 +10,7 @@ CANSparkMaxPIDLoader::CANSparkMaxPIDLoader(string name, bool adjustable, double 
     , m_iz(iz)
     , m_ia(ia) {}
 
-CANSparkMaxPIDLoader::CANSparkMaxPIDLoader(string name, bool adjustable, double p, double i, double d, double iz, double ia, double ff, double max, double min)
+PIDLoaderNEO::PIDLoaderNEO(string name, bool adjustable, double p, double i, double d, double iz, double ia, double ff, double max, double min)
     : m_name(name)
     , m_adjustable(adjustable)
     , m_p(p)
@@ -22,7 +22,7 @@ CANSparkMaxPIDLoader::CANSparkMaxPIDLoader(string name, bool adjustable, double 
     , m_max(max)
     , m_min(min) {}
 
-void CANSparkMaxPIDLoader::Load(CANPIDController& turnPIDController)
+void PIDLoaderNEO::Load(CANPIDController& turnPIDController)
 {
     turnPIDController.SetP(m_p);
     turnPIDController.SetI(m_i);
@@ -45,7 +45,7 @@ void CANSparkMaxPIDLoader::Load(CANPIDController& turnPIDController)
     }
 }
 
-void CANSparkMaxPIDLoader::LoadFromNetworkTable(CANPIDController& turnPIDController)
+void PIDLoaderNEO::LoadFromNetworkTable(CANPIDController& turnPIDController)
 {
     if (!m_adjustable)
         return;

@@ -7,8 +7,6 @@
 
 #include "subsystems/DriveSubsystem.h"
 
-#include <frc/SmartDashBoard/SmartDashboard.h>
-#include <frc/shuffleboard/Shuffleboard.h>
 
 DriveSubsystem::DriveSubsystem(Gyro *gyro)
     : m_frontLeft

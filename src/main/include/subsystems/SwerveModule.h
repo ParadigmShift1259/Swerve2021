@@ -24,15 +24,15 @@
 
 #pragma GCC diagnostic pop
 
-#include "ctre/phoenix/motorcontrol/can/TalonFX.h"
-#include "ctre/phoenix/motorcontrol/StatorCurrentLimitConfiguration.h"
+#include <ctre/phoenix/motorcontrol/can/TalonFX.h>
+#include <ctre/phoenix/motorcontrol/StatorCurrentLimitConfiguration.h>
 
 #include <string>
 
 #include "Constants.h"
 #include "common/Util.h"
-#include "common/TalonFXPIDLoader.h"
-#include "common/CANSparkMaxPIDLoader.h"
+#include "common/PIDLoaderFalcon.h"
+#include "common/PIDLoaderNEO.h"
  
 // Uncomment this to prevent swerve modules from driving
 //#define DISABLE_DRIVE
@@ -110,9 +110,9 @@ private:
     ///@}
 
     /// PID param loader for the TalonFX
-    TalonFXPIDLoader m_drivePIDLoader;
+    PIDLoaderFalcon m_drivePIDLoader;
     /// PID param loader for the CANSparkMax
-    CANSparkMaxPIDLoader m_turnPIDLoader;
+    PIDLoaderNEO m_turnPIDLoader;
 
     /// Callback used to determine the pulse width
     /// \param pwmChannel       Channel to decide which absolute encoder's pulse width values are retrieved

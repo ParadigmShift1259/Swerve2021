@@ -16,11 +16,11 @@ using namespace std;
 using namespace rev;
 
 
-class CANSparkMaxPIDLoader
+class PIDLoaderNEO
 {
 public:
-    CANSparkMaxPIDLoader(string name, bool adjustable, double p, double i, double d, double iz, double ia);
-    CANSparkMaxPIDLoader(string name, bool adjustable, double p, double i, double d, double iz, double ia, double ff, double max, double min);
+    PIDLoaderNEO(string name, bool adjustable, double p, double i, double d, double iz, double ia);
+    PIDLoaderNEO(string name, bool adjustable, double p, double i, double d, double iz, double ia, double ff, double max, double min);
 
     /// Loads turn PID controller with values, also sends default PID values to SmartDashboard
     /// \param turnPIDController        The CANPIDController of the CANSparkMax responsible for turning

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ctre/phoenix/motorcontrol/can/TalonFX.h"
+#include <ctre/phoenix/motorcontrol/can/TalonFX.h>
 #include <frc/SmartDashboard/SmartDashboard.h>
 
 #include <string>
@@ -10,11 +10,11 @@ using namespace std;
 using namespace ctre::phoenix::motorcontrol::can;
 
 
-class TalonFXPIDLoader
+class PIDLoaderFalcon
 {
 public:
-    TalonFXPIDLoader(string name, bool adjustable, double p, double i, double d, double ff);
-    TalonFXPIDLoader(string name, bool adjustable, double p, double i, double d, double ff, double max, double min);
+    PIDLoaderFalcon(string name, bool adjustable, double p, double i, double d, double ff);
+    PIDLoaderFalcon(string name, bool adjustable, double p, double i, double d, double ff, double max, double min);
 
     /// Loads drive PID controller with values, also sends default PID values to SmartDashboard
     /// \param driveMotor        The TalonFX responsible for driving

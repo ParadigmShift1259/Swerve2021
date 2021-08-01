@@ -1,7 +1,7 @@
-#include "common/TalonFXPIDLoader.h"
+#include "common/PIDLoaderFalcon.h"
 
 
-TalonFXPIDLoader::TalonFXPIDLoader(string name, bool adjustable, double p, double i, double d, double ff)
+PIDLoaderFalcon::PIDLoaderFalcon(string name, bool adjustable, double p, double i, double d, double ff)
     : m_name(name)
     , m_adjustable(adjustable)
     , m_p(p)
@@ -9,7 +9,7 @@ TalonFXPIDLoader::TalonFXPIDLoader(string name, bool adjustable, double p, doubl
     , m_d(d)
     , m_ff(ff) {}
 
-TalonFXPIDLoader::TalonFXPIDLoader(string name, bool adjustable, double p, double i, double d, double ff, double max, double min)
+PIDLoaderFalcon::PIDLoaderFalcon(string name, bool adjustable, double p, double i, double d, double ff, double max, double min)
     : m_name(name)
     , m_adjustable(adjustable)
     , m_p(p)
@@ -19,7 +19,7 @@ TalonFXPIDLoader::TalonFXPIDLoader(string name, bool adjustable, double p, doubl
     , m_max(max)
     , m_min(min) {}
 
-void TalonFXPIDLoader::Load(TalonFX& driveMotor)
+void PIDLoaderFalcon::Load(TalonFX& driveMotor)
 {
     driveMotor.Config_kP(0, m_p);
     driveMotor.Config_kD(0, m_d);
@@ -38,7 +38,7 @@ void TalonFXPIDLoader::Load(TalonFX& driveMotor)
     }
 }
 
-void TalonFXPIDLoader::LoadFromNetworkTable(TalonFX& driveMotor)
+void PIDLoaderFalcon::LoadFromNetworkTable(TalonFX& driveMotor)
 {
     if (!m_adjustable)
         return;
