@@ -7,7 +7,7 @@
 #include <memory>
 #include <utility>
 
-#include "common/SwerveControllerCommand2.h"
+#include "SwerveControllerCommand2.h"
 
 namespace frc2 {
 
