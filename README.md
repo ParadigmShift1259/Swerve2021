@@ -6,7 +6,7 @@
 ### Paradigm Shift #1259
 
 Templates for Falcon/NEO or double NEO swerve drive trains.  
-Falcon/NEO is on main, double NEO is on branch NEO (Currently not implemented).  
+Falcon/NEO is on [**main**](https://github.com/ParadigmShift1259/Swerve2021), double NEO is on branch [**NEO**](https://github.com/ParadigmShift1259/Swerve2021/tree/NEO)
 
 ### Doxygen documentation for main branch using Travis can be found [here](https://paradigmshift1259.github.io/Swerve2021).
 
