@@ -2,11 +2,13 @@
 
 <p float="left">
      <img src="robot.gif"
+          width="500"
           alt="Robot gif"
-          style="width: 51vw; display: inner-block"/>
+          style="display: inner-block"/>
      <img src="falling.gif"
+          width="336"
           alt="Falling gif"
-          style="width: 34.25vw; display: inner-block"
+          style="display: inner-block"
      />
 </p>
 
