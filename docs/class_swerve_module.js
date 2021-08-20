@@ -1,0 +1,25 @@
+var class_swerve_module =
+[
+    [ "radians_per_second_squared_t", "class_swerve_module.html#a40d12ea54f857ed50f62e387be89eb3b", null ],
+    [ "SwerveModule", "class_swerve_module.html#a0ad92a8b108598ee0b9d614c6cdb576c", null ],
+    [ "Periodic", "class_swerve_module.html#a74a1e667f17789349f93e954ef3e990d", null ],
+    [ "GetState", "class_swerve_module.html#aba8aebb88e6539a17122096750cc84a5", null ],
+    [ "SetDesiredState", "class_swerve_module.html#adf6b5a1189b79c0e5e3144051c70e6e9", null ],
+    [ "ResetEncoders", "class_swerve_module.html#acc4cc213a39cb3e934985a4f41cdce3a", null ],
+    [ "ResetRelativeToAbsolute", "class_swerve_module.html#a80fd8fa8a687c8e21c96619c3c5c0989", null ],
+    [ "CalcAbsoluteAngle", "class_swerve_module.html#af204732a6c0187fbab30b6a39baac50a", null ],
+    [ "MinTurnRads", "class_swerve_module.html#aee2cb1b09af52a59921f2a2f2fb317c4", null ],
+    [ "CalcMetersPerSec", "class_swerve_module.html#afd19949f9d9172acc9174024a2b9291a", null ],
+    [ "CalcTicksPer100Ms", "class_swerve_module.html#afaa6c66b240cf1529be4875444314418", null ],
+    [ "m_offset", "class_swerve_module.html#ac6e7720493a1a63ce3da33670eb85e91", null ],
+    [ "m_name", "class_swerve_module.html#a539d352109ca0b15f797b703cf99460f", null ],
+    [ "m_driveMotor", "class_swerve_module.html#aa18b28c7267ad96c06d055fb6bce5aee", null ],
+    [ "m_turningMotor", "class_swerve_module.html#ad930394807cc0d816935d6ebdfc430b9", null ],
+    [ "m_turnRelativeEncoder", "class_swerve_module.html#aafd2096bbcca503c78b8b480dc466c60", null ],
+    [ "m_turnPIDController", "class_swerve_module.html#a874ccb573e06524fecbda4774655fd77", null ],
+    [ "m_drivePIDLoader", "class_swerve_module.html#a6df65c4bccebc130de32d1786eb60637", null ],
+    [ "m_turnPIDLoader", "class_swerve_module.html#a2d1840a0fe51bf86039778cbdb03fcd0", null ],
+    [ "m_pulseWidthCallback", "class_swerve_module.html#aa6da40464a5a6bad7e9089e08b331a7e", null ],
+    [ "m_pwmChannel", "class_swerve_module.html#add5d69b8de22350352d352844700592b", null ],
+    [ "m_timer", "class_swerve_module.html#ad0cf71ea2670cc7e0282f27a977e434e", null ]
+];
