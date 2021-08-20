@@ -1,32 +1,3 @@
-
-
-<p float="left">
-     <img src="robot.gif"
-          width="500"
-          alt="Robot gif"
-          style="display: inner-block"/>
-     <img src="falling.gif"
-          width="336"
-          alt="Falling gif"
-          style="display: inner-block"
-     />
-</p>
-
-### Happy B-Day Ben!
-#### Had a great 4 years with you making and breaking bots
-### GL at MSOE!
-
-<br/>
-<div style="text-align: right" align="right" >
-     - Geoffrey
-</div>
-
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-
 <img src="logo.png"
      alt="Paradigm Shift logo"
      align="right"
